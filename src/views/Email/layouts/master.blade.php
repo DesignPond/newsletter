@@ -47,8 +47,7 @@
                 @endif
 
                 <tr>
-                    <td id="sortable" class="newsletterborder" width="600" align="center" valign="top">
-
+                    <td id="sortable" class="newsletterborder" style="display:block;" width="600" align="center" valign="top">
 
                         <!-- Main content -->
                         @yield('content')

@@ -1,10 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <!-- Define Charset -->
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <!-- Responsive Meta Tag -->
-
+        <link rel="stylesheet" type="text/css" href="{{ public_path('newsletter/css/frontend/print.css') }}" media="screen" />
         <style>
             * {
                 font-family: Arial, Helvetica, sans-serif;
@@ -27,7 +25,7 @@
             .bloc a,
             .bloc ul li
             {
-                font-size: 17px !important;
+                font-size: 16px !important;
                 line-height:20px;
                 box-sizing:border-box;
             }

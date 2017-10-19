@@ -47,6 +47,10 @@
                     <!-- Header -->
                     @include('newsletter::Email.send.header')
 
+                    @if(config('newsletter.pdf'))
+                        @include('newsletter::Email.send.link')
+                    @endif
+
                     <div id="viewBuild">
                         <div id="sortable">
                             @if(!$campagne->content->isEmpty())

@@ -185,7 +185,10 @@ class NewsletterUserEloquent implements NewsletterUserInterface{
 			return false;
 		}
 
-        $user->email            = $data['email'];
+		if(isset($data['email'])){
+            $user->email =  $data['email'];
+        }
+
         $user->activation_token = (isset($data['activation_token']) ? $data['activation_token'] : null);
         $user->activated_at     = (isset($data['activated_at']) ? $data['activated_at'] : null);
 		$user->updated_at = date('Y-m-d G:i:s');

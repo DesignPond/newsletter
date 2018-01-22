@@ -6,7 +6,7 @@ $factory->define(designpond\newsletter\Newsletter\Entities\Newsletter_users::cla
     return [
         'id'           => $faker->numberBetween(50,150),
         'email'        => $faker->email,
-        'token'        => '1234',
+        'activation_token'        => '1234',
         'activated_at' => date('Y-m-d G:i:s')
     ];
 });
@@ -20,7 +20,6 @@ $factory->define(designpond\newsletter\Newsletter\Entities\Newsletter_subscripti
 
 $factory->define(designpond\newsletter\Newsletter\Entities\Newsletter::class, function (Faker\Generator $faker) {
     return [
-        'id'           => 1,
         'titre'        => 'Titre',
         'list_id'      => '1',
         'from_name'    => 'Nom',

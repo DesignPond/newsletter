@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use designpond\newsletter\Newsletter\Repo\NewsletterInterface;
 use designpond\newsletter\Newsletter\Repo\NewsletterUserInterface;
 use designpond\newsletter\Newsletter\Worker\MailjetServiceInterface;
+use designpond\newsletter\Newsletter\Worker\SubscriptionWorkerInterface;
 
 use designpond\newsletter\Http\Requests\RemoveNewsletterUserRequest;
 
@@ -17,12 +18,14 @@ class SubscriberController extends Controller
     protected $subscriber;
     protected $newsletter;
     protected $worker;
+    protected $subscription_worker;
 
-    public function __construct(NewsletterUserInterface $subscriber, NewsletterInterface $newsletter, MailjetServiceInterface $worker)
+    public function __construct(NewsletterUserInterface $subscriber, NewsletterInterface $newsletter, MailjetServiceInterface $worker,SubscriptionWorkerInterface $subscription_worker)
     {
         $this->subscriber = $subscriber;
         $this->newsletter = $newsletter;
         $this->worker     = $worker;
+        $this->subscription_worker = $subscription_worker;
 
         view()->share('isNewsletter',true);
     }
@@ -130,13 +133,46 @@ class SubscriberController extends Controller
         $activated_at = ($request->input('activation') ? date('Y-m-d G:i:s') : null);
         $subscriber   = $this->subscriber->find($id);
 
-        $hadAbos = $subscriber->subscriptions->pluck('id')->all();
+        $new = $request->input('newsletter_id',[]);
+        $has = $subscriber->subscriptions->pluck('id')->all();
+
+        $added   = array_diff($new, $has);
+        $removed = array_diff(array_unique(array_merge($new, $has)), $new);
+
+        // if email edited we have to change it
+        if($request->input('email') != $subscriber->email){
+            // unsubscribe all and delete
+            $this->subscription_worker->unsubscribe($subscriber,$has);
+
+            // make new subscriber and add all
+            $newsubscriber = $this->subscriber->create([
+                'email' => $request->input('email'), 'activated_at' => $activated_at, 'activation_token' => md5($request->input('email').\Carbon\Carbon::now()),
+            ]);
+
+            $this->subscription_worker->subscribe($newsubscriber,$new);
+
+            alert()->success('Abonné édité');
+            return redirect('build/subscriber/'.$newsubscriber->id);
+        }
+        else{
+            $subscriber = $this->subscriber->update(['id' => $id,'activated_at' => $request->input('activation') ? date('Y-m-d G:i:s') : null]);
+
+            $this->subscription_worker->subscribe($subscriber,$added);
+            $subscriber = $this->subscription_worker->unsubscribe($subscriber,$removed);
+
+            if(!$subscriber){
+                alert()->success('Abonné édité et supprimé');
+                return redirect('build/subscriber');
+            }
+
+            alert()->success('Abonné édité');
+            return redirect('build/subscriber/'.$subscriber->id);
+        }
+
+   /*     $hadAbos = $subscriber->subscriptions->pluck('id')->all();
 
         $subscriber = $this->subscriber->update([
-            'id'            => $id,
-            'email'         => $request->input('email'),
-            'newsletter_id' => $request->input('newsletter_id',[]),
-            'activated_at'  => $activated_at
+            'id' => $id, 'email' => $request->input('email'), 'newsletter_id' => $request->input('newsletter_id',[]), 'activated_at'  => $activated_at
         ]);
 
         $hasAbos = $subscriber->subscriptions->pluck('id')->all();
@@ -168,7 +204,7 @@ class SubscriberController extends Controller
 
         alert()->success('Abonné édité');
 
-        return redirect('build/subscriber/'.$id);
+        return redirect('build/subscriber/'.$id);*/
 
     }
 

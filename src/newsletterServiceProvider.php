@@ -100,6 +100,7 @@ class newsletterServiceProvider extends ServiceProvider
         $this->registerListService();
         $this->registerEmailService();
         $this->registerClipboardService();
+        $this->registerSubscribeWorkerService();
     }
 
     /**
@@ -277,6 +278,21 @@ class newsletterServiceProvider extends ServiceProvider
         $this->app->singleton('designpond\newsletter\Newsletter\Repo\NewsletterClipboardInterface', function()
         {
             return new \designpond\newsletter\Newsletter\Repo\NewsletterClipboardEloquent( new \designpond\newsletter\Newsletter\Entities\Newsletter_clipboards() );
+        });
+    }
+
+    /**
+     * Newsletter subscriber service
+     */
+    protected function registerSubscribeWorkerService(){
+
+        $this->app->bind('designpond\newsletter\Newsletter\Worker\SubscriptionWorkerInterface', function()
+        {
+            return new \designpond\newsletter\Newsletter\Worker\SubscriptionWorker(
+                \App::make('designpond\newsletter\Newsletter\Repo\NewsletterInterface'),
+                \App::make('designpond\newsletter\Newsletter\Repo\NewsletterUserInterface'),
+                \App::make('designpond\newsletter\Newsletter\Worker\MailjetServiceInterface')
+            );
         });
     }
 }

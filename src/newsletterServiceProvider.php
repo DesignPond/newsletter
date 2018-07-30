@@ -67,6 +67,13 @@ class newsletterServiceProvider extends ServiceProvider
 
             return false;
         });
+
+        $this->app['validator']->extend('mustBeEmpty', function ($attr, $value, $parameters)
+        {
+            if(!empty($attr)) return false;
+            return true;
+        });
+
     }
 
     /**

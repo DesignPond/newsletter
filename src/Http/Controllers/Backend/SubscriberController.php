@@ -168,44 +168,6 @@ class SubscriberController extends Controller
             alert()->success('Abonné édité');
             return redirect('build/subscriber/'.$subscriber->id);
         }
-
-   /*     $hadAbos = $subscriber->subscriptions->pluck('id')->all();
-
-        $subscriber = $this->subscriber->update([
-            'id' => $id, 'email' => $request->input('email'), 'newsletter_id' => $request->input('newsletter_id',[]), 'activated_at'  => $activated_at
-        ]);
-
-        $hasAbos = $subscriber->subscriptions->pluck('id')->all();
-
-        $added   = array_filter(array_diff($hasAbos,$hadAbos));
-        $removed = array_filter(array_diff($hadAbos,$hasAbos));
-
-        if(!empty($added) && $activated_at)
-        {
-            foreach($added as $list)
-            {
-                $newsletter = $this->newsletter->find($list);
-
-                $this->worker->setList($newsletter->list_id);
-                $this->worker->subscribeEmailToList($subscriber->email);
-            }
-        }
-
-        if(!empty($removed))
-        {
-            foreach($removed as $list)
-            {
-                $newsletter = $this->newsletter->find($list);
-                
-                $this->worker->setList($newsletter->list_id);
-                $this->worker->removeContact($subscriber->email);
-            }
-        }
-
-        alert()->success('Abonné édité');
-
-        return redirect('build/subscriber/'.$id);*/
-
     }
 
     /**

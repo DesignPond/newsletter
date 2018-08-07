@@ -26,7 +26,8 @@ class SubscribeRequest extends Request
     {
         return [
             'email' => 'required|email',
-            'honey' => 'mustBeEmpty'
+            'my_name'  => 'honeypot',
+            'my_time'  => 'required|honeytime:2'
         ];
     }
 
